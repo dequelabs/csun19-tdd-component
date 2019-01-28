@@ -1,0 +1,16 @@
+{
+  "name": "csun19",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Harris Schneiderman",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "ava": "^1.2.0",
+    "jsdom": "13.2.0",
+    "jsdom-global": "3.0.2"
+  },
+  "scripts": {
+    "test": "ava"
+  }
+}
