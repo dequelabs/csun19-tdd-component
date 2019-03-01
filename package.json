@@ -13,6 +13,6 @@
     "simulant": "^0.2.2"
   },
   "scripts": {
-    "test": "ava"
+    "test": "ava test/index.js"
   }
 }

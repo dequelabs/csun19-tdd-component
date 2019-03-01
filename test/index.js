@@ -29,7 +29,7 @@ test.afterEach(t => fixture.innerHTML = '');
  * 
  * - this means we need to manage tabIndex (0 on the "active" tab and -1 on the rest)
  */
-test.todo('manages tab index', t => {
+test('manages tab index', t => {
   const [ tab1, tab2, tab3 ] = tabs;
   t.is(tab1.tabIndex, 0);
   t.is(tab2.tabIndex, -1);
@@ -41,7 +41,7 @@ test.todo('manages tab index', t => {
  * 
  * - circular!
  */
-test.todo('given a left arrow, focuses the previous tab', t => {
+test('given a left arrow, focuses the previous tab', t => {
   const arrowLeft = simulant('keydown', { key: 'ArrowLeft' });
   simulant.fire(tab1, arrowLeft);
   t.is(document.activeElement, tab3);
@@ -54,7 +54,7 @@ test.todo('given a left arrow, focuses the previous tab', t => {
  * 
  * - circular!
  */
-test.todo('given a right arrow, focuses the next tab', t => {
+test('given a right arrow, focuses the next tab', t => {
   const arrowRight = simulant('keydown', { key: 'ArrowRight' });
   simulant.fire(tab3, arrowRight);
   t.is(document.activeElement, tab1);
@@ -65,14 +65,14 @@ test.todo('given a right arrow, focuses the next tab', t => {
 /**
  * The element that serves as the container for the set of tabs has role tablist.
  */
-test.todo('role=tablist is set on the container', t => {
+test('role=tablist is set on the container', t => {
   t.is(tablist.getAttribute('role'), 'tablist');
 });
 
 /**
  * Each element that serves as a tab has role tab and is contained within the element with role tablist.
  */
-test.todo('role=tab is set on each tab', t => {
+test('role=tab is set on each tab', t => {
   t.is(
     tabs.filter(t => t.getAttribute('role') === 'tab').length,
     3
@@ -84,7 +84,7 @@ test.todo('role=tab is set on each tab', t => {
  * 
  * - check for aria-labelledby OR aria-label
  */
-test.todo('the tablist has an accessible label', t => {
+test('the tablist has an accessible label', t => {
   const ariaLabel = tablist.getAttribute('aria-label');
   if (ariaLabel) {
     t.pass();
@@ -104,7 +104,7 @@ test.todo('the tablist has an accessible label', t => {
 /**
  * Each element with role tab has the property aria-controls referring to its associated tabpanel element.
  */
-test.todo('each tab aria-controls it\'s panel', t => {
+test('each tab aria-controls it\'s panel', t => {
   tabs.forEach(tab => {
     const controlsID = tab.getAttribute('aria-controls');
     t.truthy(controlsID && document.getElementById(controlsID));
@@ -114,7 +114,7 @@ test.todo('each tab aria-controls it\'s panel', t => {
 /**
  * The active tab element has the state aria-selected set to true and all other tab elements have it set to false.
  */
-test.todo('aria-selected=true is set on the selected tab, while the others are false', t => {
+test('aria-selected=true is set on the selected tab, while the others are false', t => {
   tabs[1].click();
   tabs.forEach((tab, index) => {
     t.is(tab.getAttribute('aria-selected'), index === 1 ? 'true' : 'false');
@@ -129,7 +129,7 @@ test.todo('aria-selected=true is set on the selected tab, while the others are f
 /**
  * Each element with role tabpanel has the property aria-labelledby referring to its associated tab element.
  */
-test.todo('each panel is labelled by it\'s tab', t => {
+test('each panel is labelled by it\'s tab', t => {
   const [ panel1, panel2, panel3 ] = panels;
   const [ tab1, tab2, tab3 ] = tabs;
 
@@ -141,7 +141,7 @@ test.todo('each panel is labelled by it\'s tab', t => {
 /**
  * Mouse users
  */
-test.todo('clicking tab displays its panel', t => {
+test('clicking tab displays its panel', t => {
   tabs[1].click();
   tabs.forEach((tab, index) => {
     t.is(isVisible(tab), index === 1);
