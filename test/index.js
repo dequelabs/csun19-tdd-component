@@ -86,6 +86,16 @@ test('role=tab is set on each tab', t => {
 });
 
 /**
+ * Each element that contains the content panel for a tab has role tabpanel.
+ */
+test('role=tabpanel is set on each panel', t => {
+  t.is(
+    panels.filter(p => p.getAttribute('role') === 'tabpanel').length,
+    3
+  );
+});
+
+/**
  * If the tab list has a visible label, the element with role tablist has aria-labelledby set to a value that refers to the labeling element. Otherwise, the tablist element has a label provided by aria-label.
  *
  * - check for aria-labelledby OR aria-label
