@@ -1,25 +1,25 @@
 import 'jsdom-global/register';
 import test from 'ava';
 import simulant from 'simulant';
-import isVisible from 'is-visible';
 import html from './fixture';
-import csunTabs from '../';
+import CsunTabs from '../';
 
 const { document } = global.window;
+global.document = document;
 
 /**
  * Setup the fixture
  */
 let tablist, tabs, panels;
 const fixture = document.createElement('div');
-// Before each test runs we setup a "new"
-// fixture and call csunTabs on the tablist
+document.body.appendChild(fixture);
+
 test.beforeEach(() => {
   fixture.innerHTML = html;
   tablist = fixture.querySelector('[role="tablist"]')
   tabs = [...fixture.querySelectorAll('[role="tab"]')];
   panels = [...fixture.querySelectorAll('[role="tabpanel"]')];
-  csunTabs(tablist);
+  new CsunTabs(tablist);
 });
 // after each test clear out the fixture
 test.afterEach(() => fixture.innerHTML = '');
@@ -44,8 +44,10 @@ test('manages tab index', t => {
 test('given a left arrow, focuses the previous tab', t => {
   const [ tab1, tab2, tab3 ] = tabs;
   const arrowLeft = simulant('keydown', { key: 'ArrowLeft' });
+  tab1.click();
   simulant.fire(tab1, arrowLeft);
   t.is(document.activeElement, tab3);
+  tab3.click();
   simulant.fire(tab3, arrowLeft);
   t.is(document.activeElement, tab2);
 });
@@ -56,10 +58,12 @@ test('given a left arrow, focuses the previous tab', t => {
  * - circular!
  */
 test('given a right arrow, focuses the next tab', t => {
-  const [tab1, tab2, tab3] = tabs;
+  const [ tab1, tab2, tab3 ] = tabs;
   const arrowRight = simulant('keydown', { key: 'ArrowRight' });
+  tab3.click();
   simulant.fire(tab3, arrowRight);
   t.is(document.activeElement, tab1);
+  tab1.click();
   simulant.fire(tab1, arrowRight);
   t.is(document.activeElement, tab2);
 });
@@ -146,11 +150,11 @@ test('each panel is labelled by it\'s tab', t => {
 test('clicking tab displays its panel', t => {
   tabs[1].click();
   tabs.forEach((tab, index) => {
-    t.is(isVisible(tab), index === 1);
+    t.is(panels[index].classList.contains('active'), index === 1);
   });
 
   tabs[0].click();
   tabs.forEach((tab, index) => {
-    t.is(isVisible(tab), index === 0);
+    t.is(panels[index].classList.contains('active'), index === 0);
   });
 });

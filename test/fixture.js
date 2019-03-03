@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = `
-    <div role="tablist" aria-label="CSUN">
+    <div id="demo" role="tablist" aria-label="CSUN">
         <button
             role="tab"
             aria-selected="true"
@@ -38,5 +38,8 @@ module.exports = `
     </div>
     <div role="tabpanel" id="csun19-panel" aria-labelledby="csun19">
         <p>At CSUN 2019 (right now!), I did some live coding...and it was a DISASTER (kidding hopefully)</p>
+        <a href="https://github.com/schne324/csun19-tdd-component" target="_blank">
+            View the csun19 repo here
+        </a>
     </div>
 `;

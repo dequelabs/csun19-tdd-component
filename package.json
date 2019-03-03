@@ -8,12 +8,12 @@
   "devDependencies": {
     "ava": "^1.2.0",
     "eslint": "^5.15.0",
-    "is-visible": "^2.2.0",
     "jsdom": "13.2.0",
     "jsdom-global": "3.0.2",
     "simulant": "^0.2.2"
   },
   "scripts": {
+    "dev": "parcel demo/index.html",
     "lint": "eslint .",
     "test": "ava test/index.js"
   }
