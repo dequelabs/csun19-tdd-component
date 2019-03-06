@@ -12,46 +12,50 @@ module.exports = class CsunTabs {
         tab.getAttribute('aria-controls')
       );
     });
+
     this.onClick = this.onClick.bind(this);
     this.onKeydown = this.onKeydown.bind(this);
     this.init();
   }
 
-  activate(toActivate, focus) {
-    this.tabs.forEach((tab, i) => {
-      const isActive = tab === toActivate;
-      const panel = this.panels[i];
+  init() {
+    const initiallyActive = this.panels.find(panels => {
+      return panels.classList.contains(this.options.activeClass);
+    }) || this.tabs[0];
+
+    this.activate(initiallyActive);
+    this.tablist.addEventListener('click', this.onClick);
+    this.tablist.addEventListener('keydown', this.onKeydown);
+  }
+
+  activate(newlyActive, focus) {
+    const { activeClass } = this.options;
+    this.tabs.forEach((tab, index) => {
+      const isActive = tab === newlyActive;
+      const panel = this.panels[index];
 
       tab.tabIndex = isActive ? 0 : -1;
       tab.setAttribute('aria-selected', isActive);
 
       if (isActive) {
-        panel.classList.add(this.options.activeClass);
-        this.activeIndex = i;
+        panel.classList.add(activeClass);
+        this.activeIndex = index;
       } else {
-        panel.classList.remove(this.options.activeClass);
+        panel.classList.remove(activeClass);
       }
     });
 
     if (focus) {
-      toActivate.focus();
+      newlyActive.focus();
     }
-  }
-
-  init() {
-    const initiallyActive = this.tabs.find((_, i) => {
-      return this.panels[i].classList.contains(this.options.activeClass);
-    }) || this.tabs[0];
-    this.activate(initiallyActive);
-
-    this.tablist.addEventListener('click', this.onClick);
-    this.tablist.addEventListener('keydown', this.onKeydown);
   }
 
   onClick(e) {
-    if (this.tabs.indexOf(e.target) > -1) {
-      this.activate(e.target);
+    if (this.tabs.indexOf(e.target) === -1) {
+      return;
     }
+
+    this.activate(e.target);
   }
 
   onKeydown(e) {
@@ -61,18 +65,22 @@ module.exports = class CsunTabs {
 
     switch (e.key) {
       case 'ArrowLeft': {
-        const newIndex = this.activeIndex === 0
-          ? this.tabs.length - 1
+        e.preventDefault();
+        const leftIndex = this.activeIndex === 0
+          ? this.tabs.length - 1 // from first to last
           : this.activeIndex - 1;
-        this.activate(this.tabs[newIndex], true);
+
+        this.activate(this.tabs[leftIndex], true);
         break;
       }
 
       case 'ArrowRight': {
-        const newIndex = this.activeIndex === this.tabs.length - 1
-          ? 0
+        e.preventDefault();
+        const rightIndex = this.activeIndex === this.tabs.length - 1
+          ? 0 // from last to first
           : this.activeIndex + 1;
-        this.activate(this.tabs[newIndex], true);
+
+        this.activate(this.tabs[rightIndex], true);
         break;
       }
 
