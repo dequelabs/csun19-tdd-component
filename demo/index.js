@@ -1,6 +1,6 @@
 
 const Csuntabs = require('../');
-const fixture = require('../test/fixture');
+const fixture = require('./fixture');
 
 document.getElementById('app').innerHTML = fixture;
 

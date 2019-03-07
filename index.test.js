@@ -1,8 +1,7 @@
-import 'jsdom-global/register';
-import test from 'ava';
 import simulant from 'simulant';
-import html from './fixture';
-import CsunTabs from '../';
+import axe from 'axe-core';
+import html from './demo/fixture';
+import CsunTabs from './';
 
 const { document } = global.window;
 global.document = document;
@@ -14,7 +13,7 @@ let tablist, tabs, panels;
 const fixture = document.createElement('div');
 document.body.appendChild(fixture);
 
-test.beforeEach(() => {
+beforeEach(() => {
   fixture.innerHTML = html;
   tablist = fixture.querySelector('[role="tablist"]')
   tabs = [...fixture.querySelectorAll('[role="tab"]')];
@@ -22,18 +21,22 @@ test.beforeEach(() => {
   new CsunTabs(tablist);
 });
 // after each test clear out the fixture
-test.afterEach(() => fixture.innerHTML = '');
+afterEach(async () => {
+  const { violations } = await axe.run(fixture);
+  expect(violations.length).toBe(0);
+  fixture.innerHTML = '';
+});
 
 /**
  * Tab: When focus moves into the tab list, places focus on the active tab element . When the tab list contains the focus, moves focus to the next element in the page tab sequence outside the tablist, which is typically either the first focusable element inside the tab panel or the tab panel itself.
  *
  * - this means we need to manage tabIndex (0 on the "active" tab and -1 on the rest)
  */
-test('manages tab index', t => {
+test('manages tab index', () => {
   const [ tab1, tab2, tab3 ] = tabs;
-  t.is(tab1.tabIndex, 0);
-  t.is(tab2.tabIndex, -1);
-  t.is(tab3.tabIndex, -1);
+  expect(tab1.tabIndex).toBe(0);
+  expect(tab2.tabIndex).toBe(-1);
+  expect(tab3.tabIndex).toBe(-1);
 });
 
 /**
@@ -41,15 +44,15 @@ test('manages tab index', t => {
  *
  * - circular!
  */
-test('given a left arrow, focuses the previous tab', t => {
+test('given a left arrow, focuses the previous tab', () => {
   const [ tab1, tab2, tab3 ] = tabs;
   const arrowLeft = simulant('keydown', { key: 'ArrowLeft' });
   tab1.click();
   simulant.fire(tab1, arrowLeft);
-  t.is(document.activeElement, tab3);
+  expect(document.activeElement).toBe(tab3);
   tab3.click();
   simulant.fire(tab3, arrowLeft);
-  t.is(document.activeElement, tab2);
+  expect(document.activeElement).toBe(tab2);
 });
 
 /**
@@ -57,42 +60,38 @@ test('given a left arrow, focuses the previous tab', t => {
  *
  * - circular!
  */
-test('given a right arrow, focuses the next tab', t => {
+test('given a right arrow, focuses the next tab', () => {
   const [ tab1, tab2, tab3 ] = tabs;
   const arrowRight = simulant('keydown', { key: 'ArrowRight' });
   tab3.click();
   simulant.fire(tab3, arrowRight);
-  t.is(document.activeElement, tab1);
+  expect(document.activeElement).toBe(tab1);
   tab1.click();
   simulant.fire(tab1, arrowRight);
-  t.is(document.activeElement, tab2);
+  expect(document.activeElement).toBe(tab2);
 });
 
 /**
  * The element that serves as the container for the set of tabs has role tablist.
  */
-test('role=tablist is set on the container', t => {
-  t.is(tablist.getAttribute('role'), 'tablist');
+test('role=tablist is set on the container', () => {
+  expect(tablist.getAttribute('role')).toBe('tablist');
 });
 
 /**
  * Each element that serves as a tab has role tab and is contained within the element with role tablist.
  */
-test('role=tab is set on each tab', t => {
-  t.is(
-    tabs.filter(t => t.getAttribute('role') === 'tab').length,
-    3
-  );
+test('role=tab is set on each tab', () => {
+  expect(tabs.filter(t => t.getAttribute('role') === 'tab').length)
+    .toBe(3);
 });
 
 /**
  * Each element that contains the content panel for a tab has role tabpanel.
  */
-test('role=tabpanel is set on each panel', t => {
-  t.is(
-    panels.filter(p => p.getAttribute('role') === 'tabpanel').length,
-    3
-  );
+test('role=tabpanel is set on each panel', () => {
+  expect(panels.filter(p => p.getAttribute('role') === 'tabpanel').length)
+    .toBe(3);
 });
 
 /**
@@ -100,71 +99,71 @@ test('role=tabpanel is set on each panel', t => {
  *
  * - check for aria-labelledby OR aria-label
  */
-test('the tablist has an accessible label', t => {
+test('the tablist has an accessible label', done => {
   const ariaLabel = tablist.getAttribute('aria-label');
   if (ariaLabel) {
-    t.pass();
+    done();
     return;
   }
 
   const labelledby = tablist.getAttribute('aria-label');
   const label = labelledby && document.getElementById(labelledby);
   if (label) {
-    t.pass();
+    done();
     return;
   }
 
-  t.fail();
+  done.fail();
 });
 
 /**
  * Each element with role tab has the property aria-controls referring to its associated tabpanel element.
  */
-test('each tab aria-controls it\'s panel', t => {
+test('each tab aria-controls it\'s panel', () => {
   tabs.forEach(tab => {
     const controlsID = tab.getAttribute('aria-controls');
-    t.truthy(controlsID && document.getElementById(controlsID));
+    expect(controlsID && document.getElementById(controlsID)).toBeTruthy();
   });
 });
 
 /**
  * The active tab element has the state aria-selected set to true and all other tab elements have it set to false.
  */
-test('aria-selected=true is set on the selected tab, while the others are false', t => {
+test('aria-selected=true is set on the selected tab, while the others are false', () => {
   tabs[1].click();
   tabs.forEach((tab, index) => {
-    t.is(tab.getAttribute('aria-selected'), index === 1 ? 'true' : 'false');
+    expect(tab.getAttribute('aria-selected')).toBe(index === 1 ? 'true' : 'false');
   });
 
   tabs[0].click();
   tabs.forEach((tab, index) => {
-    t.is(tab.getAttribute('aria-selected'), index === 0 ? 'true' : 'false');
+    expect(tab.getAttribute('aria-selected')).toBe(index === 0 ? 'true' : 'false');
   });
 });
 
 /**
  * Each element with role tabpanel has the property aria-labelledby referring to its associated tab element.
  */
-test('each panel is labelled by it\'s tab', t => {
+test('each panel is labelled by it\'s tab', () => {
   const [ panel1, panel2, panel3 ] = panels;
   const [ tab1, tab2, tab3 ] = tabs;
 
-  t.is(panel1.getAttribute('aria-labelledby'), tab1.id);
-  t.is(panel2.getAttribute('aria-labelledby'), tab2.id);
-  t.is(panel3.getAttribute('aria-labelledby'), tab3.id);
+  expect(panel1.getAttribute('aria-labelledby')).toBe(tab1.id);
+  expect(panel2.getAttribute('aria-labelledby')).toBe(tab2.id);
+  expect(panel3.getAttribute('aria-labelledby')).toBe(tab3.id);
 });
 
 /**
  * Mouse users
  */
-test('clicking tab displays its panel', t => {
+test('clicking tab displays its panel', () => {
   tabs[1].click();
   tabs.forEach((tab, index) => {
-    t.is(panels[index].classList.contains('active'), index === 1);
+    expect(panels[index].classList.contains('active')).toBe(index === 1);
   });
 
   tabs[0].click();
   tabs.forEach((tab, index) => {
-    t.is(panels[index].classList.contains('active'), index === 0);
+    expect(panels[index].classList.contains('active')).toBe(index === 0);
   });
 });
