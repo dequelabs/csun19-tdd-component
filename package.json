@@ -12,6 +12,7 @@
     "babel-jest": "^24.1.0",
     "eslint": "^5.15.0",
     "jest": "^24.1.0",
+    "parcel": "^1.12.0",
     "simulant": "^0.2.2"
   },
   "scripts": {
@@ -20,13 +21,19 @@
     "test": "jest"
   },
   "jest": {
-    "collectCoverageFrom": ["index.js"]
+    "collectCoverageFrom": [
+      "index.js"
+    ]
   },
   "babel": {
     "presets": [
       [
         "@babel/preset-env",
-        { "targets": { "node": "current" } }
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
       ]
     ]
   }
