@@ -16,6 +16,8 @@
     "simulant": "^0.2.2"
   },
   "scripts": {
+    "build": "parcel build demo/index.html",
+    "deploy": "NODE_ENV=production npm run build && gh-pages -d dist",
     "dev": "parcel demo/index.html",
     "lint": "eslint .",
     "test": "jest"
@@ -36,5 +38,9 @@
         }
       ]
     ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dequelabs/csun19-tdd-component.git"
   }
 }
