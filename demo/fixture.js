@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = `
-    <div id="demo" role="tabs" aria-label="CSUN">
+    <div id="demo" role="tablist" aria-label="CSUN">
         <button
             role="tab"
             aria-selected="true"
