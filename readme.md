@@ -29,6 +29,12 @@ $ yarn test
 $ yarn dev
 ```
 
+### Deploy to github pages
+
+```sh
+$ yarn deploy
+```
+
 ### Gotchas
 
 * Both the unit tests _and_ the demo app run [axe-core](https://github.com/dequelabs/axe-core)
