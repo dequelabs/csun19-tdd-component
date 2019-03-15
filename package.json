@@ -5,6 +5,7 @@
   "author": "Harris Schneiderman",
   "license": "UNLICENSED",
   "private": false,
+  "homepage": "https://dequelabs.github.io/csun19-tdd-component",
   "devDependencies": {
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
